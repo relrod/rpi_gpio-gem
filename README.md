@@ -1,4 +1,4 @@
-# rPi_GPIO-gem
+# rpi_gpio-gem
 
 A rubygem for interacting with the Raspberry Pi's GPIO pins.
 
