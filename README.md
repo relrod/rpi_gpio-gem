@@ -19,7 +19,7 @@ drwxr-xr-x  2 root root 0 May 29 06:42 gpio
 
 # Examples
 
-## Read from an input pin.
+### Read from an input pin.
 
 ```ruby
 require 'rpi_gpio'
@@ -29,7 +29,7 @@ the_pin.read
 
 ## Output#
 
-## Write to an output pin.
+### Write to an output pin.
 
 ```ruby
 require 'rpi_gpio'
