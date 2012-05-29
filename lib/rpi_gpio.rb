@@ -50,9 +50,9 @@ class GPIOPin
       raise InvalidDirectionError, "Direction should be :in or :out."
     end
 
-    if @pinout_mode == :bcm and PINS.values.include? pin
+    if @pinout_mode == :bcm && PINS.values.include?(pin)
       @pin = pin
-    elsif @pinout_mode == :rpi and PINS.keys.include? pin
+    elsif @pinout_mode == :rpi && PINS.keys.include?(pin)
       @pin = PINS[pin]
     else
       raise InvalidPinError, "That pin doesn't exist for this pinout mode."
