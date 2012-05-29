@@ -64,11 +64,11 @@ class GPIOPin
 
   # Public: Exports the pin.
   def export!
-    File.open "/sys/class/gpio/unexport" do |f|
+    File.open "/sys/class/gpio/unexport", "a" do |f|
       f.write @pin
     end
 
-    File.open "/sys/class/gpio/gpio#{@pin}/direction" do |f|
+    File.open "/sys/class/gpio/gpio#{@pin}/direction", "a" do |f|
       f.write @direction
     end
   end
@@ -77,7 +77,7 @@ class GPIOPin
   #
   # Returns nothing.
   def unexport!
-    File.open "/sys/class/gpio/unexport" do |f|
+    File.open "/sys/class/gpio/unexport", "a" do |f|
       f.write @pin
     end
   end
@@ -87,7 +87,7 @@ class GPIOPin
   # Returns nothing.
   def activate
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
-    File.open "/sys/class/gpio/gpio#{@pin}/value" do |f|
+    File.open "/sys/class/gpio/gpio#{@pin}/value", "a" do |f|
       f.write 1
     end
   end
@@ -97,7 +97,7 @@ class GPIOPin
   # Returns nothing.
   def deactivate
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
-    File.open "/sys/class/gpio/gpio#{@pin}/value" do |f|
+    File.open "/sys/class/gpio/gpio#{@pin}/value", "a" do |f|
       f.write 0
     end
   end
