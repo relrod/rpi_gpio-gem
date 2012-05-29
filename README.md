@@ -19,6 +19,20 @@ drwxr-xr-x  2 root root 0 May 29 06:42 gpio
 
 # Examples
 
+### Set the pinout mode
+
+The pinout mode can be either the Pi's pin numbers or the Broadcom GPIO
+numbers.
+
+```ruby
+require 'rpi_gpio'
+GPIOPin.pinout_mode = :rpi # use the Pi's pin numbers (default)
+the_pin = GPIOPin.new(11, :in) # Pi pin 11 (Broadcom pin 17).
+
+GPIOPin.pinout_mode = :bcm # Use Broadcom's GPIO numbers
+the_pin = GPIOPin.new(11, :in) # Broadcom pin 11 (Pi pin 23).
+```
+
 ### Read from an input pin.
 
 ```ruby
