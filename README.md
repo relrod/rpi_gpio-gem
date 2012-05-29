@@ -23,7 +23,7 @@ drwxr-xr-x  2 root root 0 May 29 06:42 gpio
 
 ```ruby
 require 'rpi_gpio'
-the_pin = GPIOPin(11, :in)
+the_pin = GPIOPin.new(11, :in)
 the_pin.read
 ```
 
@@ -33,7 +33,7 @@ the_pin.read
 
 ```ruby
 require 'rpi_gpio'
-the_pin = GPIOPin(12, :out)
+the_pin = GPIOPin.new(12, :out)
 the_pin.activate # Write '1' to the pin.
 the_pin.deactivate # Write '0' to the pin.
 ```
@@ -44,7 +44,7 @@ the_pin.deactivate # Write '0' to the pin.
 
 ```ruby
 require 'rpi_gpio'
-the_pin = GPIOPin(12, :out) # Defaults to being exported.
+the_pin = GPIOPin.new(12, :out) # Defaults to being exported.
 the_pin.unexport!
 the_pin.export!
 ```
@@ -52,7 +52,7 @@ the_pin.export!
 ### Check whether or not the pin *is* exported.
 ```ruby
 require 'rpi_gpio'
-the_pin = GPIOPin(12, :out) # Defaults to being exported.
+the_pin = GPIOPin.new(12, :out) # Defaults to being exported.
 the_pin.is_exported? #=> true
 the_pin.unexport!
 the_pin.is_exported? #=> false
