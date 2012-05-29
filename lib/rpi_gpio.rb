@@ -68,7 +68,7 @@ class GPIOPin
       f.write @pin
     end
 
-    File.open "/sys/class/gpio/gpio#{@pin}/direction", "a" do |f|
+    File.open "/sys/class/gpio/gpio#{@pin}/direction" do |f|
       f.write @direction
     end
   end
@@ -97,7 +97,7 @@ class GPIOPin
   # Returns nothing.
   def deactivate
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
-    File.open "/sys/class/gpio/gpio#{@pin}/value", "a" do |f|
+    File.open "/sys/class/gpio/gpio#{@pin}/value" do |f|
       f.write 0
     end
   end

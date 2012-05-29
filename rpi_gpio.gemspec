@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'rpi_gpio'
-  s.version     = '1.0.3'
+  s.version     = '1.0.4'
   s.date        = '2012-05-29'
   s.homepage    = 'https://www.github.com/CodeBlock/rpi_gpio-gem'
   s.summary     = "A rubygem for communicating with the Raspberry Pi's GPIO pins."
