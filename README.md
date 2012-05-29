@@ -27,7 +27,7 @@ the_pin = GPIOPin(11, :in)
 the_pin.read
 ```
 
-## Output#
+## Output
 
 ### Write to an output pin.
 
@@ -36,6 +36,26 @@ require 'rpi_gpio'
 the_pin = GPIOPin(12, :out)
 the_pin.activate # Write '1' to the pin.
 the_pin.deactivate # Write '0' to the pin.
+```
+
+## Other Public Functions
+
+### Export/unexport a pin at will.
+
+```ruby
+require 'rpi_gpio'
+the_pin = GPIOPin(12, :out) # Defaults to being exported.
+the_pin.unexport!
+the_pin.export!
+```
+
+### Check whether or not the pin *is* exported.
+```ruby
+require 'rpi_gpio'
+the_pin = GPIOPin(12, :out) # Defaults to being exported.
+the_pin.is_exported? #=> true
+the_pin.unexport!
+the_pin.is_exported? #=> false
 ```
 
 # License (MIT)
