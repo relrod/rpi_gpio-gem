@@ -109,6 +109,11 @@ class GPIOPin
   def is_exported?
     `sudo [ -d /sys/class/gpio/gpio#{@pin} ] && echo true || false`.chomp == 'true'
   end
+  
+  def pins_in_use
+    pins = `sudo ls /sys/class/gpio`.scan(/(?:gpio)(\d+)/).flatten.map!(&:to_i)
+    pins.map!{|pin| PINS.invert[pin]} if @pinout_mode == :rpi
+  end
     
   def write(value, destination)
     `sudo bash -c "echo #{value} > #{destination} && echo true || false"`.chomp == 'true'
