@@ -8,9 +8,9 @@ same goal, by Ben Croston.
 
 ## Note
 
-**Programs which use this library must be run as root.**
+**Programs which use this library can now be run as any user that has sudo privileges.**
 
-This is because of permissions on `/sys/class/gpio`:
+This is because the code uses sudo and the permissions on `/sys/class/gpio`:
 
 ```bash
 [root@fedora-arm ~]# ls -la /sys/class/ | grep gpio
@@ -48,8 +48,11 @@ the_pin.read
 ```ruby
 require 'rpi_gpio'
 the_pin = GPIOPin.new(12, :out)
+the_pin.read # Check the current state.
 the_pin.activate # Write '1' to the pin.
+the_pin.read # Check the current state.
 the_pin.deactivate # Write '0' to the pin.
+the_pin.read # Check the current state.
 ```
 
 ## Other Public Functions
