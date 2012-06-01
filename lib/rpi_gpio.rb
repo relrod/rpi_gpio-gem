@@ -11,6 +11,11 @@ class GPIOPin
   class << self
     attr_accessor :pinout_mode
   end
+  
+  def self.pins_in_use
+    pins = `sudo ls /sys/class/gpio`.scan(/(?:gpio)(\d+)/).flatten.map!(&:to_i)
+    pins.map!{|pin| PINS.invert[pin]} if @pinout_mode == :rpi
+  end
 
   # This is a hash of rpi -> bcm GPIO pin numbers.
   PINS = {
@@ -108,11 +113,6 @@ class GPIOPin
   # Returns true if it is exported, false if not.
   def is_exported?
     `sudo [ -d /sys/class/gpio/gpio#{@pin} ] && echo true || false`.chomp == 'true'
-  end
-  
-  def pins_in_use
-    pins = `sudo ls /sys/class/gpio`.scan(/(?:gpio)(\d+)/).flatten.map!(&:to_i)
-    pins.map!{|pin| PINS.invert[pin]} if @pinout_mode == :rpi
   end
     
   def write(value, destination)
