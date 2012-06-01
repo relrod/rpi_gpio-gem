@@ -12,14 +12,14 @@ class GPIOPin
     attr_accessor :pinout_mode
   end
   
-  def self.pins_in_use
+  def self.pins_in_use(mode=@pinout_mode)
     pins = `sudo ls /sys/class/gpio`.scan(/(?:gpio)(\d+)/).flatten.map!(&:to_i)
-    pins.map!{|pin| PINS.invert[pin]} if @pinout_mode == :rpi
+    pins.map!{|pin| PINS.invert[pin]} if mode == :rpi
     pins
   end
   
   def self.unexport_all!
-    self.pins_in_use.each{|pin| `sudo bash -c "echo #{pin} > /sys/class/gpio/unexport"`}
+    self.pins_in_use(:bcm).each{|pin| `sudo bash -c "echo #{pin} > /sys/class/gpio/unexport"`}
     self.pins_in_use
   end
 
