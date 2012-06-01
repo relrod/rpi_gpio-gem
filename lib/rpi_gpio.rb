@@ -17,6 +17,11 @@ class GPIOPin
     pins.map!{|pin| PINS.invert[pin]} if @pinout_mode == :rpi
     pins
   end
+  
+  def self.unexport_all!
+    self.pins_in_use.map{|pin| `sudo bash -c "echo #{pin} > /sys/class/gpio/unexport"`}
+    self.pins_in_use
+  end
 
   # This is a hash of rpi -> bcm GPIO pin numbers.
   PINS = {
