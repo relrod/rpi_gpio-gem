@@ -19,7 +19,7 @@ class GPIOPin
   end
   
   def self.unexport_all!
-    self.pins_in_use.map{|pin| `sudo bash -c "echo #{pin} > /sys/class/gpio/unexport"`}
+    self.pins_in_use.each{|pin| `sudo bash -c "echo #{pin} > /sys/class/gpio/unexport"`}
     self.pins_in_use
   end
 
