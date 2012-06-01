@@ -15,6 +15,7 @@ class GPIOPin
   def self.pins_in_use
     pins = `sudo ls /sys/class/gpio`.scan(/(?:gpio)(\d+)/).flatten.map!(&:to_i)
     pins.map!{|pin| PINS.invert[pin]} if @pinout_mode == :rpi
+    pins
   end
 
   # This is a hash of rpi -> bcm GPIO pin numbers.
