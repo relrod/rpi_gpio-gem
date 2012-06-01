@@ -64,15 +64,15 @@ class GPIOPin
 
   # Public: Exports the pin.
   def export!
-    `sudo echo #{@pin} > /sys/class/gpio/export`
-    `sudo echo #{@direction} > /sys/class/gpio/gpio#{@pin}/direction`
+    `echo #{@pin} > sudo /sys/class/gpio/export`
+    `echo #{@direction} > sudo /sys/class/gpio/gpio#{@pin}/direction`
   end
 
   # Public: Unexports the pin.
   #
   # Returns nothing.
   def unexport!
-    `sudo echo #{@pin} > /sys/class/gpio/unexport`
+    `echo #{@pin} > sudo /sys/class/gpio/unexport`
   end
 
   # Public: Activate the pin
@@ -108,7 +108,7 @@ class GPIOPin
   end
     
   def write(value, destination)
-    `sudo echo #{value} > #{destination}`.chomp
+    `echo #{value} > sudo #{destination}`.chomp
   end
 
 end
