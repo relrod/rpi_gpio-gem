@@ -99,7 +99,6 @@ class GPIOPin
   #
   # Returns true if the pin is pulled, false if not.
   def read
-    raise WrongDirectionError, "This pin is an output." if @direction == 'out'
     status = `sudo cat /sys/class/gpio/gpio#{@pin}/value`.chomp
     status == '1'
   end
