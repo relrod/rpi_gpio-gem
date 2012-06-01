@@ -64,15 +64,17 @@ class GPIOPin
 
   # Public: Exports the pin.
   def export!
-    `echo #{@pin} > sudo /sys/class/gpio/export`
-    `echo #{@direction} > sudo /sys/class/gpio/gpio#{@pin}/direction`
+    `sudo bash -c "echo #{@pin} > /sys/class/gpio/export"`
+    `sudo bash -c "echo #{@direction} > /sys/class/gpio/gpio#{@pin}/direction"`
+    is_exported?
   end
 
   # Public: Unexports the pin.
   #
   # Returns nothing.
   def unexport!
-    `echo #{@pin} > sudo /sys/class/gpio/unexport`
+    `sudo bash -c "echo #{@pin} > /sys/class/gpio/unexport"`
+    !is_exported?
   end
 
   # Public: Activate the pin
@@ -81,6 +83,7 @@ class GPIOPin
   def activate
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
     write 1, "/sys/class/gpio/gpio#{@pin}/value"
+    read
   end
 
   # Public: Deactivate the pin
@@ -89,6 +92,7 @@ class GPIOPin
   def deactivate
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
     write 0, "/sys/class/gpio/gpio#{@pin}/value"
+    read
   end
 
   # Public: Read from the pin
@@ -108,7 +112,7 @@ class GPIOPin
   end
     
   def write(value, destination)
-    `echo #{value} > sudo #{destination}`.chomp
+    `sudo bash -c "echo #{value} > #{destination} && echo true || false"`.chomp == 'true'
   end
 
 end
