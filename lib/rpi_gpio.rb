@@ -64,7 +64,7 @@ class GPIOPin
 
   # Public: Exports the pin.
   def export!
-    `sudo echo #{@pin} > /sys/class/gpio/unexport`
+    `sudo echo #{@pin} > /sys/class/gpio/export`
     `sudo echo #{@direction} > /sys/class/gpio/gpio#{@pin}/direction`
   end
 
