@@ -64,22 +64,15 @@ class GPIOPin
 
   # Public: Exports the pin.
   def export!
-    File.open "/sys/class/gpio/unexport", "a" do |f|
-      f.write @pin
-    end
-
-    File.open "/sys/class/gpio/gpio#{@pin}/direction" do |f|
-      f.write @direction
-    end
+    `sudo echo #{@pin} > /sys/class/gpio/unexport`
+    `sudo echo #{@direction} > /sys/class/gpio/gpio#{@pin}/direction`
   end
 
   # Public: Unexports the pin.
   #
   # Returns nothing.
   def unexport!
-    File.open "/sys/class/gpio/unexport", "a" do |f|
-      f.write @pin
-    end
+    `sudo echo #{@pin} > /sys/class/gpio/unexport`
   end
 
   # Public: Activate the pin
@@ -87,9 +80,7 @@ class GPIOPin
   # Returns nothing.
   def activate
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
-    File.open "/sys/class/gpio/gpio#{@pin}/value", "a" do |f|
-      f.write 1
-    end
+    write 1, "/sys/class/gpio/gpio#{@pin}/value"
   end
 
   # Public: Deactivate the pin
@@ -97,9 +88,7 @@ class GPIOPin
   # Returns nothing.
   def deactivate
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
-    File.open "/sys/class/gpio/gpio#{@pin}/value" do |f|
-      f.write 0
-    end
+    write 0, "/sys/class/gpio/gpio#{@pin}/value"
   end
 
   # Public: Read from the pin
@@ -107,7 +96,7 @@ class GPIOPin
   # Returns true if the pin is pulled, false if not.
   def read
     raise WrongDirectionError, "This pin is an output." if @direction == 'out'
-    status = IO.read "/sys/class/gpio/gpio#{@pin}/value"
+    status = `sudo cat /sys/class/gpio/gpio#{@pin}/value`.chomp
     status == '1'
   end
 
@@ -115,6 +104,11 @@ class GPIOPin
   #
   # Returns true if it is exported, false if not.
   def is_exported?
-    File.exists? "/sys/class/gpio/gpio#{@pin}"
+    `sudo [ -d /sys/class/gpio/gpio#{@pin} ] && echo true || false`.chomp == 'true'
   end
+    
+  def write(value, destination)
+    `sudo echo #{value} > #{destination}`.chomp
+  end
+
 end
