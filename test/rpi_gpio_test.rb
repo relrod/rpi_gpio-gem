@@ -33,14 +33,14 @@ context 'rpi_gpio - ' do
         ret = pin.read
         pin.unexport!
         ret
-      end
+      end.equals(false)
     end
   end # 'verbose method'
 
   context 'destructive methods -' do
     context 'pin 12' do
       asserts 'can be activated' do
-        GPIOPin.new(12, :out).activate!
+        GPIOPin.new(12, :out).activate
       end
 
       asserts 'remains activated' do
@@ -48,39 +48,39 @@ context 'rpi_gpio - ' do
       end
 
       asserts 'can be deactivated' do
-        GPIOPin.new(12, :out).deactivate!
+        GPIOPin.new(12, :out).deactivate
       end
 
       asserts 'remains deactivated' do
-        GPIPin.new(12, :in).read
-      end
+        GPIOPin.new(12, :in).read
+      end.equals(false)
     end
   end # 'destructive methods'
-
+=begin
   context 'blocks -' do
-      asserts 'can be activated' do
-        GPIOPin.new(12, :out).export! do |p|
-          p.activate!
-        end
+    asserts 'can be activated' do
+      GPIOPins.new(:out => [12]).export! do |p|
+        p.activate!
       end
+    end
 
-      asserts 'remains activated' do
-        GPIOPin.new(12, :in).export! do |p|
-          p.read
-        end
+    asserts 'remains activated' do
+      GPIOPin.new(:in => [12]).export! do |p|
+         p.read
       end
+    end
 
-      asserts 'can be deactivated' do
-        GPIOPin.new(12, :out).export! do |p|
-          p.deactivate
-        end
+    asserts 'can be deactivated' do
+      GPIOPin.new(:out => [12]).export! do |p|
+        p.deactivate
       end
+    end
 
-      asserts 'remains deactivated' do
-        GPIPin.new(12, :in).export! do |p|
-          p.read
-        end
+    asserts 'remains deactivated' do
+      GPIPin.new(:in => [12]).export! do |p|
+        p.read
       end
+    end
   end
-
+=end
 end

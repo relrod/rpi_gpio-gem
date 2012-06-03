@@ -100,20 +100,34 @@ class GPIOPin
 
   # Public: Activate the pin
   #
-  # Returns nothing.
+  # Returns true if successfully enabled, false if not.
   def activate
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
+
+    cond = exported?
+    export! unless cond
+
     write 1, "/sys/class/gpio/gpio#{@pin}/value"
-    read
+    ret = read
+
+    unexport! unless cond
+    ret
   end
 
   # Public: Deactivate the pin
   #
-  # Returns nothing.
+  # Returns true if successfully disabled, false if not.
   def deactivate
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
+
+    cond = exported?
+    export! unless cond
+
     write 0, "/sys/class/gpio/gpio#{@pin}/value"
-    read
+    ret = !read # Because `read` should be false if it succeeded.
+
+    unexport! unless cond
+    ret
   end
 
   # Public: Determines if the pin is exported or not.
@@ -128,7 +142,10 @@ class GPIOPin
   #
   # Returns true if the pin is pulled, false if not.
   def read
-    status = `sudo cat /sys/class/gpio/gpio#{@pin}/value`.chomp
+    #status = `sudo cat /sys/class/gpio/gpio#{@pin}/value`.chomp
+    #status == '1'
+    #raise WrongDirectionError, "This pin is an output." if @direction == 'out'
+    status = IO.read "/sys/class/gpio/gpio#{@pin}/value"
     status == '1'
   end
 
