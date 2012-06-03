@@ -13,13 +13,19 @@ class GPIOPin
   end
   
   def self.pins_in_use(mode=@pinout_mode)
-    pins = `sudo ls /sys/class/gpio`.scan(/(?:gpio)(\d+)/).flatten.map!(&:to_i)
-    pins.map!{|pin| PINS.invert[pin]} if mode == :rpi
+    #pins = `sudo ls /sys/class/gpio`.scan(/(?:gpio)(\d+)/).flatten.map!(&:to_i)
+    Dir['/sys/class/gpio/*'].scan(/(?:gpio)(\d+)/).flatten.map!(&:to_i)
+    if mode == :rpi
+      pins.map! { |pin| PINS.invert[pin] }
+    end
     pins
   end
   
   def self.unexport_all!
-    self.pins_in_use(:bcm).each{|pin| `sudo bash -c "echo #{pin} > /sys/class/gpio/unexport"`}
+    #self.pins_in_use(:bcm).each{|pin| `sudo bash -c "echo #{pin} > /sys/class/gpio/unexport"`}
+    self.pins.in_use(:bcm).each do |pin|
+      write pin, "/sys/class/gpio/unexport"
+    end
     self.pins_in_use
   end
 
@@ -57,7 +63,8 @@ class GPIOPin
   #
   # Returns the instance of GPIOPin.
   def initialize(pin, direction)
-    unless ['in', 'out'].include? (@direction = direction.to_s)
+    @direction = direction.to_s
+    unless ['in', 'out'].include?(@direction)
       raise InvalidDirectionError, "Direction should be :in or :out."
     end
 
@@ -69,23 +76,26 @@ class GPIOPin
       raise InvalidPinError, "That pin doesn't exist for this pinout mode."
     end
 
-    unexport! if is_exported?
+    unexport! if exported?
     export!
   end
 
   # Public: Exports the pin.
   def export!
-    `sudo bash -c "echo #{@pin} > /sys/class/gpio/export"`
-    `sudo bash -c "echo #{@direction} > /sys/class/gpio/gpio#{@pin}/direction"`
-    is_exported?
+    #`sudo bash -c "echo #{@pin} > /sys/class/gpio/export"`
+    #`sudo bash -c "echo #{@direction} > /sys/class/gpio/gpio#{@pin}/direction"`
+    write @pin, "/sys/class/gpio/export"
+    write @direction, "/sys/class/gpio/gpio#{@pin}/direction"
+    exported?
   end
 
   # Public: Unexports the pin.
   #
   # Returns nothing.
   def unexport!
-    `sudo bash -c "echo #{@pin} > /sys/class/gpio/unexport"`
-    !is_exported?
+    #`sudo bash -c "echo #{@pin} > /sys/class/gpio/unexport"`
+    write @pin, "/sys/class/gpio/unexport"
+    !exported?
   end
 
   # Public: Activate the pin
@@ -106,6 +116,14 @@ class GPIOPin
     read
   end
 
+  # Public: Determines if the pin is exported or not.
+  #
+  # Returns true if it is exported, false if not.
+  def exported?
+    #`sudo [ -d /sys/class/gpio/gpio#{@pin} ] && echo true || false`.chomp == 'true'
+    File.directory?("/sys/class/gpio/gpio#{@pin}")
+  end
+
   # Public: Read from the pin
   #
   # Returns true if the pin is pulled, false if not.
@@ -114,15 +132,10 @@ class GPIOPin
     status == '1'
   end
 
-  # Public: Determines if the pin is exported or not.
-  #
-  # Returns true if it is exported, false if not.
-  def is_exported?
-    `sudo [ -d /sys/class/gpio/gpio#{@pin} ] && echo true || false`.chomp == 'true'
-  end
-    
   def write(value, destination)
-    `sudo bash -c "echo #{value} > #{destination} && echo true || false"`.chomp == 'true'
+    #`sudo bash -c "echo #{value} > #{destination} && echo true || false"`.chomp == 'true'
+    File.open(destination, 'a') do |f|
+      f.write value
+    end
   end
-
 end

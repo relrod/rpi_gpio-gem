@@ -70,9 +70,9 @@ the_pin.export!
 ```ruby
 require 'rpi_gpio'
 the_pin = GPIOPin.new(12, :out) # Defaults to being exported.
-the_pin.is_exported? #=> true
+the_pin.exported? #=> true
 the_pin.unexport!
-the_pin.is_exported? #=> false
+the_pin.exported? #=> false
 ```
 
 # License (MIT)
