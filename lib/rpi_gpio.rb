@@ -105,12 +105,16 @@ class GPIOPin
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
 
     cond = exported?
-    export! unless cond
+    export! unless cond # Export if we haven't already
 
     write 1, "/sys/class/gpio/gpio#{@pin}/value"
-    ret = read
 
-    unexport! unless cond
+    unexport! # Un-export so we can read the pin's value.
+
+    ret = self.class.new(PINS.invert[@pin], :in).read
+
+    export! if cond # Re-export if it was exported originally.
+
     ret
   end
 
@@ -121,12 +125,17 @@ class GPIOPin
     raise WrongDirectionError, "This pin is an input." if @direction == 'in'
 
     cond = exported?
-    export! unless cond
+    export! unless cond # Export if we haven't already
 
     write 0, "/sys/class/gpio/gpio#{@pin}/value"
-    ret = !read # Because `read` should be false if it succeeded.
 
-    unexport! unless cond
+    unexport! # Un-export so we can read the pin's value.
+
+    # We invert the following because `read` should be false if this is deactivated.
+    ret = !self.class.new(PINS.invert[@pin], :in).read
+
+    export! if cond # Re-export if it was exported originally.
+
     ret
   end
 
@@ -144,8 +153,15 @@ class GPIOPin
   def read
     #status = `sudo cat /sys/class/gpio/gpio#{@pin}/value`.chomp
     #status == '1'
-    #raise WrongDirectionError, "This pin is an output." if @direction == 'out'
+    raise WrongDirectionError, "This pin is an output." if @direction == 'out'
+
+    cond = exported?
+    export! unless cond
+
     status = IO.read "/sys/class/gpio/gpio#{@pin}/value"
+
+    unexport! unless cond
+
     status == '1'
   end
 
